@@ -15,12 +15,25 @@ function isPairingPayload(v: unknown): v is PairingPayload {
     (p.role === 'kocis' || p.role === 'karicik')
 }
 
-export function Setup() {
-  const [mode, setMode] = useState<Mode>('welcome')
+interface Props {
+  /** Kamera uygulamasindan gelen baglantidaki kod. Eslestirme koduysa dogrudan PIN adimina atlanir. */
+  incomingCode?: string | null
+  onCodeUsed?: () => void
+}
+
+export function Setup({ incomingCode, onCodeUsed }: Props) {
+  // Eslestirme baglantisiyla gelindiyse karekod okutma adimini atla: telefon
+  // zaten karekodu okuyup buraya geldi, tekrar okutmak sacma olur.
+  const incomingPairing = incomingCode ? decodePairing(incomingCode) : null
+  const arrivedByPairingLink = isPairingPayload(incomingPairing)
+
+  const [mode, setMode] = useState<Mode>(arrivedByPairingLink ? 'pair-pin' : 'welcome')
   const [role, setRole] = useState<Role>('kocis')
   const [pin, setPin] = useState('')
   const [pin2, setPin2] = useState('')
-  const [payload, setPayload] = useState<PairingPayload | null>(null)
+  const [payload, setPayload] = useState<PairingPayload | null>(
+    arrivedByPairingLink ? incomingPairing : null,
+  )
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -63,7 +76,8 @@ export function Setup() {
     setBusy(true)
     try {
       const ok = await pairDevice(payload, pin)
-      if (!ok) setError('PIN eşleşmedi. Eşinizin belirlediği PIN’i girin.')
+      if (ok) onCodeUsed?.()
+      else setError('PIN eşleşmedi. Eşinizin belirlediği PIN’i girin.')
     } catch (err) {
       console.error(err)
       setError('Eşleştirme tamamlanamadı.')
@@ -86,6 +100,13 @@ export function Setup() {
             ödüle dönüşür.
           </p>
         </div>
+
+        {incomingCode && !arrivedByPairingLink && (
+          <div className="note" style={{ marginTop: 20 }}>
+            🎁 Bir kupon bağlantısıyla geldiniz, ama bu telefon henüz programa katılmamış. Önce eşinizin
+            telefonundaki <strong>Eşleştirme Kodu</strong> ile eşleşin; kuponu sonra tekrar açın.
+          </div>
+        )}
 
         <div className="stack" style={{ marginTop: 24 }}>
           <button type="button" className="btn btn--primary btn--block" onClick={() => setMode('first')}>
@@ -176,11 +197,20 @@ export function Setup() {
     <div className="screen">
       <div className="screen-head">
         <h1>Ortak PIN</h1>
-        <button type="button" className="btn btn--ghost btn--sm" onClick={() => setMode('pair-scan')}>
+        <button
+          type="button"
+          className="btn btn--ghost btn--sm"
+          onClick={() => setMode(arrivedByPairingLink ? 'welcome' : 'pair-scan')}
+        >
           Geri
         </button>
       </div>
       <div className="card stack">
+        {arrivedByPairingLink && (
+          <div className="note note--good">
+            🔗 Eşleştirme bağlantısı tanındı. Son bir adım kaldı.
+          </div>
+        )}
         <p className="muted tiny">
           Eşiniz kurulumda hangi PIN’i belirlediyse onu girin. PIN doğruysa iki telefon aynı anahtarı üretir
           ve kuponlar birbirini tanır.

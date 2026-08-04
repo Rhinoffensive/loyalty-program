@@ -12,7 +12,7 @@ interface Props {
  * Kamera + elle kod yapistirma. Ikisi de ayni onScan'i besler; kamera
  * calismadiginda (izin yok, HTTPS yok, cihazda kamera yok) metin yolu kalir.
  */
-export function Scanner({ onScan, hint, pasteLabel = 'Kupon kodunu yapıştır' }: Props) {
+export function Scanner({ onScan, hint, pasteLabel = 'Kupon bağlantısını ya da kodunu yapıştır' }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const handleRef = useRef<ScannerHandle | null>(null)
   const firedRef = useRef(false)
@@ -62,7 +62,7 @@ export function Scanner({ onScan, hint, pasteLabel = 'Kupon kodunu yapıştır' 
           </div>
           <p className="muted tiny center">{hint ?? 'Karekodu çerçevenin içine alın.'}</p>
           <button type="button" className="btn btn--ghost btn--sm" onClick={() => setManual(true)}>
-            Kamera yerine kodu yapıştır
+            Kamera yerine bağlantıyı yapıştır
           </button>
         </>
       )}
@@ -76,7 +76,7 @@ export function Scanner({ onScan, hint, pasteLabel = 'Kupon kodunu yapıştır' 
               className="input input--code"
               rows={4}
               value={pasted}
-              placeholder="KP1..."
+              placeholder="https://… ya da KP1…"
               autoCapitalize="off"
               autoCorrect="off"
               spellCheck={false}
@@ -89,7 +89,7 @@ export function Scanner({ onScan, hint, pasteLabel = 'Kupon kodunu yapıştır' 
             disabled={pasted.trim().length < 8}
             onClick={() => onScan(pasted.trim())}
           >
-            Kodu kullan
+            Devam et
           </button>
           {cameraUnavailableReason() === null && (
             <button

@@ -53,8 +53,11 @@ export function Award({ identity }: { identity: Identity }) {
         <QrView value={coupon} shareTitle={`${formatPoints(effective)} ${CURRENCY_LABEL[currency]}`} />
 
         <div className="note">
-          Kupon 14 gün geçerli ve yalnızca <strong>bir kez</strong> kullanılabilir. Aynı odada değilseniz
-          “Gönder” ile mesajla da yollayabilirsiniz.
+          📷 {ROLE_LABEL[otherRole(identity.role)]} bunu telefonun <strong>normal kamerasıyla</strong> da
+          okutabilir — çıkan bağlantıya dokununca uygulama açılıp puanı ekler. Aynı odada değilseniz
+          “Gönder” ile mesajla yollayın.
+          <br />
+          <span className="tiny">Kupon 14 gün geçerli ve yalnızca bir kez kullanılabilir.</span>
         </div>
 
         <button

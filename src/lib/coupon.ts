@@ -7,6 +7,7 @@
 
 import { b64urlToText, textToB64url } from './base64'
 import { newNonce, sign, verify } from './crypto'
+import { extractCode } from './link'
 import type { Reward, Role } from './types'
 
 const PREFIX = 'KP1.'
@@ -95,9 +96,9 @@ export type ParseResult =
   | { ok: true; body: CouponBody }
   | { ok: false; reason: string }
 
-/** Metni cozer, imzayi ve tazeligi dogrular. */
+/** Metni cozer, imzayi ve tazeligi dogrular. Duz kodu da baglantiyi da kabul eder. */
 export async function decode(key: Uint8Array, text: string): Promise<ParseResult> {
-  const raw = text.trim()
+  const raw = extractCode(text)
   if (!raw.startsWith(PREFIX)) {
     return {
       ok: false,
@@ -130,7 +131,7 @@ export async function decode(key: Uint8Array, text: string): Promise<ParseResult
 
 /** Eslestirme kodunu cozer (imzasiz — dogrulugu PIN kontrolu ile kanitlanir). */
 export function decodePairing(text: string): unknown | null {
-  const raw = text.trim()
+  const raw = extractCode(text)
   if (!raw.startsWith(PAIR_PREFIX)) return null
   try {
     return JSON.parse(b64urlToText(raw.slice(PAIR_PREFIX.length)))

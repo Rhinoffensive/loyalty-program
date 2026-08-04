@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import QRCode from 'qrcode'
+import { couponLink } from '../lib/link'
 
 interface Props {
   value: string
@@ -8,17 +9,20 @@ interface Props {
 }
 
 /**
- * QR + "kodu kopyala/paylas". Metin yolu bilincli olarak var: kamera
+ * QR + "kodu kopyala/paylas". Karekod, kuponu uygulama adresine gomulu bir
+ * baglanti olarak tasir: telefonun varsayilan kamera uygulamasi okuyunca
+ * dokunmayla uygulama acilir. Metin yolu bilincli olarak duruyor — kamera
  * bozulsa da, ayni odada olunmasa da kupon WhatsApp'tan gecebiliyor.
  */
 export function QrView({ value, shareTitle = 'Puan kuponu' }: Props) {
+  const link = useMemo(() => couponLink(value), [value])
   const [src, setSrc] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [showCode, setShowCode] = useState(false)
 
   useEffect(() => {
     let alive = true
-    QRCode.toDataURL(value, { margin: 1, width: 560, errorCorrectionLevel: 'M' })
+    QRCode.toDataURL(link, { margin: 1, width: 560, errorCorrectionLevel: 'M' })
       .then((url) => {
         if (alive) setSrc(url)
       })
@@ -26,7 +30,7 @@ export function QrView({ value, shareTitle = 'Puan kuponu' }: Props) {
     return () => {
       alive = false
     }
-  }, [value])
+  }, [link])
 
   useEffect(() => {
     if (!copied) return
@@ -36,7 +40,7 @@ export function QrView({ value, shareTitle = 'Puan kuponu' }: Props) {
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(value)
+      await navigator.clipboard.writeText(link)
       setCopied(true)
     } catch {
       setShowCode(true)
@@ -45,7 +49,7 @@ export function QrView({ value, shareTitle = 'Puan kuponu' }: Props) {
 
   const share = async () => {
     try {
-      await navigator.share({ title: shareTitle, text: value })
+      await navigator.share({ title: shareTitle, text: link })
     } catch {
       /* kullanici vazgecti */
     }
@@ -59,7 +63,7 @@ export function QrView({ value, shareTitle = 'Puan kuponu' }: Props) {
 
       <div className="btn-row">
         <button type="button" className="btn btn--ghost btn--sm" onClick={copy}>
-          {copied ? '✓ Kopyalandı' : '📋 Kodu kopyala'}
+          {copied ? '✓ Kopyalandı' : '🔗 Bağlantıyı kopyala'}
         </button>
         {typeof navigator.share === 'function' && (
           <button type="button" className="btn btn--ghost btn--sm" onClick={share}>
@@ -70,12 +74,12 @@ export function QrView({ value, shareTitle = 'Puan kuponu' }: Props) {
 
       {showCode ? (
         <div className="field">
-          <label>Kupon kodu (elle kopyalayın)</label>
-          <textarea className="input input--code" readOnly rows={4} value={value} onFocus={(e) => e.target.select()} />
+          <label>Kupon bağlantısı (elle kopyalayın)</label>
+          <textarea className="input input--code" readOnly rows={4} value={link} onFocus={(e) => e.target.select()} />
         </div>
       ) : (
         <button type="button" className="btn btn--ghost btn--sm" onClick={() => setShowCode(true)}>
-          Kodu metin olarak göster
+          Bağlantıyı metin olarak göster
         </button>
       )}
     </div>

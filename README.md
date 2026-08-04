@@ -18,6 +18,24 @@ imzalı QR kuponların elden ele geçmesiyle olur.
 - Her QR'ın metin karşılığı da vardır. Kamera çalışmasa da, aynı odada olmasanız da kupon
   WhatsApp'tan geçebilir.
 
+### Karekodlar telefonun normal kamerasıyla da okunur
+
+Karekodlar düz `KP1...` metni değil, uygulama adresine gömülü bir bağlantı taşır:
+
+```
+https://<adres>/#k=KP1....
+```
+
+Telefonun **varsayılan kamera uygulaması** böyle bir karekodu okuduğunda bir bağlantı gösterir;
+dokununca uygulama açılır ve kupon kendiliğinden işlenir — önce uygulamayı açıp "Tara" demeye gerek
+kalmaz. Ana ekrana eklenmişse Android bağlantıyı kurulu uygulamada açar, değilse tarayıcıda; sonuç
+aynı. Aynısı eşleştirme karekodu için de geçerli: ikinci telefon okutunca doğrudan PIN adımına düşer.
+
+Kupon bilinçli olarak adresin **diyez (`#`) kısmında** durur: diyezden sonrası tarayıcı tarafından
+hiçbir zaman sunucuya gönderilmez, yani kuponlarınız GitHub'ın sunucu kayıtlarına düşmez. Cihaz
+kilitliyse kupon adreste bekletilir, PIN girildikten sonra işlenir. Eski, düz metin taşıyan
+karekodlar da okunmaya devam eder.
+
 ## Güvenlik
 
 GitHub Pages ücretsiz katmanı repoyu public olmaya zorluyor, yani paketi herkes indirebilir. Bu yüzden
@@ -68,6 +86,7 @@ yayındaki adreste yapın. O zamana kadar her ekranda bulunan "kodu yapıştır"
 src/
   lib/crypto.ts     PBKDF2 türetme, HMAC imzalama/doğrulama
   lib/coupon.ts     Kupon paketleme/çözme, tazelik kontrolü
+  lib/link.ts       Kupon <-> bağlantı dönüşümü, adresten gelen kuponu okuma
   lib/store.ts      localStorage durumu, bakiye, defter, yedek
   lib/scanner.ts    BarcodeDetector + ZXing yedeği
   components/       Coin, MemberCard, StampCard, QrView, Scanner, Sheet, Confetti

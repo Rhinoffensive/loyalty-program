@@ -205,8 +205,9 @@ function PairPanel({ onClose }: { onClose: () => void }) {
         <>
           <QrView value={encodePairing(payload)} shareTitle="Puan programı eşleştirme kodu" />
           <div className="note">
-            Eşiniz uygulamayı açıp <strong>“Eşimin telefonuyla eşleştir”</strong> desin, bunu okutsun ve aynı
-            PIN’i girsin. Bu kod gizli anahtar taşımaz; asıl doğrulama PIN ile yapılır.
+            📷 Eşiniz bunu telefonun <strong>normal kamerasıyla</strong> okutsun: çıkan bağlantıya dokununca
+            uygulama açılır ve doğrudan PIN adımına gider. (İsterse uygulamayı açıp “Eşimin telefonuyla
+            eşleştir” de diyebilir.) Bu kod gizli anahtar taşımaz; asıl doğrulama PIN ile yapılır.
           </div>
         </>
       ) : (

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Coin } from '../components/Coin'
 import { Confetti } from '../components/Confetti'
 import { QrView } from '../components/QrView'
@@ -24,8 +24,16 @@ type View =
   | { k: 'settled'; title: string; cost: number }
   | { k: 'catalog'; count: number }
 
-export function Scan({ identity }: { identity: Identity }) {
+interface Props {
+  identity: Identity
+  /** Kamera uygulamasindan gelen baglantidaki kupon — kamerayi hic acmadan islenir. */
+  incomingCode?: string | null
+  onCodeUsed?: () => void
+}
+
+export function Scan({ identity, incomingCode, onCodeUsed }: Props) {
   const [view, setView] = useState<View>({ k: 'scan' })
+  const handledRef = useRef<string | null>(null)
 
   const handle = useCallback(
     async (text: string) => {
@@ -77,6 +85,20 @@ export function Scan({ identity }: { identity: Identity }) {
     },
     [identity.role],
   )
+
+  // Baglantiyla gelen kupon kamera acilmadan islenir; adresten ancak burada silinir.
+  // Kilit (handledRef) yalnizca ayni kuponun tek seferde iki kez islenmesini
+  // engeller ve kupon tuketilince acilir — ayni baglantiya tekrar dokunuldugunda
+  // sessiz kalmak yerine "zaten kullanilmis" diyebilmesi icin.
+  useEffect(() => {
+    if (!incomingCode) {
+      handledRef.current = null
+      return
+    }
+    if (handledRef.current === incomingCode) return
+    handledRef.current = incomingCode
+    void handle(incomingCode).finally(() => onCodeUsed?.())
+  }, [incomingCode, handle, onCodeUsed])
 
   const approve = async (body: RequestBody) => {
     const key = getKey()

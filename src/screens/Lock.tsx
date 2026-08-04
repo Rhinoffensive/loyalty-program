@@ -4,8 +4,14 @@ import { PinField, isValidPin } from '../components/PinField'
 import { unlock } from '../lib/store'
 import { ROLE_LABEL, heldCurrency, type Role } from '../lib/types'
 
+interface Props {
+  role: Role
+  /** Baglantiyla bir kupon geldi ama cihaz kilitli — PIN sonrasi devam edecek. */
+  pendingCoupon?: boolean
+}
+
 /** Cihaz token'i silindiginde (Ayarlar > Kilitle) cikan ekran. */
-export function Lock({ role }: { role: Role }) {
+export function Lock({ role, pendingCoupon = false }: Props) {
   const [pin, setPin] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -29,7 +35,11 @@ export function Lock({ role }: { role: Role }) {
       <div className="stack center">
         <Coin currency={heldCurrency(role)} size={84} float />
         <h1>Merhaba {ROLE_LABEL[role]}</h1>
-        <p className="muted">Devam etmek için ortak PIN’i girin.</p>
+        <p className="muted">
+          {pendingCoupon
+            ? 'Bir kupon geldi 🎁 Açmak için ortak PIN’i girin.'
+            : 'Devam etmek için ortak PIN’i girin.'}
+        </p>
       </div>
       <div className="card stack" style={{ marginTop: 24 }}>
         <PinField label="PIN" value={pin} onChange={setPin} autoFocus onEnter={submit} />
