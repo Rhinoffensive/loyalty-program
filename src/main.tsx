@@ -1,10 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { registerSW } from 'virtual:pwa-register'
 import { App } from './App'
+import { startUpdateWatch } from './lib/update'
 import './theme.css'
 
-registerSW({ immediate: true })
+startUpdateWatch()
 
 // Puanlarin tarayici temizliginde ucmamasi icin kalici depolama iste.
 navigator.storage?.persist?.().catch(() => {})

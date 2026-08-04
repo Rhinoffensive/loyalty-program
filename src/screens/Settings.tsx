@@ -3,6 +3,7 @@ import { QrView } from '../components/QrView'
 import { Sheet } from '../components/Sheet'
 import { encode, encodePairing, makeCatalog } from '../lib/coupon'
 import { formatPoints, formatWhen } from '../lib/format'
+import { BUILD_STAMP, checkForUpdate } from '../lib/update'
 import {
   exportBackup,
   getKey,
@@ -34,6 +35,18 @@ export function Settings({ identity }: { identity: Identity }) {
   useEffect(() => {
     navigator.storage?.persisted?.().then(setPersisted).catch(() => setPersisted(null))
   }, [])
+
+  const runUpdateCheck = async () => {
+    setMessage('Güncelleme aranıyor…')
+    const result = await checkForUpdate()
+    setMessage(
+      result === 'guncelleniyor'
+        ? 'Yeni sürüm indiriliyor. Birkaç saniye içinde uygulama kendini yenileyecek.'
+        : result === 'guncel'
+          ? 'Zaten en güncel sürümdesiniz.'
+          : 'Güncelleme denetlenemedi. Uygulamayı tamamen kapatıp yeniden açmayı deneyin.',
+    )
+  }
 
   const requestPersist = async () => {
     const ok = await navigator.storage?.persist?.()
@@ -155,6 +168,19 @@ export function Settings({ identity }: { identity: Identity }) {
             </button>
           )}
         </div>
+        <div className="row">
+          <span className="muted tiny">
+            Sürüm: <strong>{BUILD_STAMP}</strong>
+          </span>
+          <span className="spacer" />
+          <button type="button" className="btn btn--ghost btn--sm" onClick={() => void runUpdateCheck()}>
+            Güncelle
+          </button>
+        </div>
+        <p className="muted tiny">
+          İki telefonda bu sürüm aynı olmalı. Farklıysa eski kalan telefonda “Güncelle”ye basın; yeni sürüm
+          inince uygulama kendini yenileyecek.
+        </p>
         <button type="button" className="btn btn--ghost btn--block" onClick={lock}>
           🔒 Kilitle (PIN’i tekrar sor)
         </button>

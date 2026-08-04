@@ -6,8 +6,17 @@ import { VitePWA } from 'vite-plugin-pwa'
 // Workflow build sirasinda BASE_PATH'i repo adiyla dolduruyor; yerelde kok yol yeterli.
 const base = process.env.BASE_PATH ?? '/'
 
+// Ayarlar ekraninda gorunen surum damgasi. "Guncelleme telefonuma indi mi?"
+// sorusunu tahmine birakmamak icin var.
+const buildStamp = `${new Date().toISOString().slice(0, 16).replace('T', ' ')} · ${
+  process.env.GITHUB_SHA?.slice(0, 7) ?? 'yerel'
+}`
+
 export default defineConfig({
   base,
+  define: {
+    __BUILD_STAMP__: JSON.stringify(buildStamp),
+  },
   plugins: [
     react(),
     VitePWA({
