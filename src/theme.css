@@ -1,0 +1,880 @@
+/* Kocis & Karicik Puan Programi — pastel tema, mobil oncelikli. */
+
+:root {
+  --kocis-1: #8ea6f2;
+  --kocis-2: #b9a6f5;
+  --kocis-ink: #4a4a86;
+
+  --karicik-1: #f8a9c2;
+  --karicik-2: #ffc7a6;
+  --karicik-ink: #8a4560;
+
+  --radius-lg: 26px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+
+  --ink: #4a3f4d;
+  --ink-soft: #8b7f8f;
+  --card: #ffffff;
+  --line: #f0e6ec;
+  --bg: #fdf7fa;
+  --bg-2: #f6eef4;
+  --shadow: 0 10px 30px -12px rgba(122, 84, 106, 0.35);
+  --shadow-sm: 0 4px 14px -6px rgba(122, 84, 106, 0.3);
+
+  --good: #3fa87a;
+  --bad: #d76a6a;
+
+  --accent-1: var(--karicik-1);
+  --accent-2: var(--karicik-2);
+  --accent-ink: var(--karicik-ink);
+
+  color-scheme: light;
+}
+
+/* Rol temasi: iki telefon yan yanayken bakista ayrilsin. */
+[data-role='kocis'] {
+  --accent-1: var(--kocis-1);
+  --accent-2: var(--kocis-2);
+  --accent-ink: var(--kocis-ink);
+  --bg: #f7f8fe;
+  --bg-2: #eef1fb;
+  --line: #e7e9f6;
+  --shadow: 0 10px 30px -12px rgba(84, 92, 122, 0.35);
+  --shadow-sm: 0 4px 14px -6px rgba(84, 92, 122, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f2e9ef;
+    --ink-soft: #a99fb0;
+    --card: #2b2531;
+    --line: #3b3341;
+    --bg: #1d1922;
+    --bg-2: #241f2c;
+    --shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.7);
+    --shadow-sm: 0 6px 16px -8px rgba(0, 0, 0, 0.6);
+    --accent-ink: #ffd4e2;
+    color-scheme: dark;
+  }
+  [data-role='kocis'] {
+    --bg: #191c26;
+    --bg-2: #202432;
+    --card: #262b3a;
+    --line: #333a4d;
+    --accent-ink: #cdd6ff;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Nunito', 'Quicksand', ui-rounded, 'SF Pro Rounded', -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 1.45rem;
+}
+h2 {
+  font-size: 1.15rem;
+}
+h3 {
+  font-size: 1rem;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* --- Kabuk ---------------------------------------------------------------- */
+
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+  background-attachment: fixed;
+}
+
+.screen {
+  flex: 1;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: max(16px, env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.screen--plain {
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  justify-content: center;
+}
+
+.screen-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.screen-head p {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+/* --- Alt sekme cubugu ------------------------------------------------------ */
+
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+}
+
+.tabbar__inner {
+  display: flex;
+  width: 100%;
+  max-width: 520px;
+  gap: 2px;
+}
+
+.tab {
+  position: relative;
+  flex: 1;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-md);
+  padding: 8px 2px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  transition: color 0.18s, background 0.18s, transform 0.18s;
+}
+
+.tab span[aria-hidden] {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.tab--active {
+  color: var(--accent-ink);
+  background: color-mix(in srgb, var(--accent-1) 18%, transparent);
+}
+
+.tab:active {
+  transform: scale(0.94);
+}
+
+.tab__badge {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  margin-left: 6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--bad);
+  color: #fff;
+  font-size: 0.62rem;
+  line-height: 16px;
+  font-weight: 800;
+}
+
+/* --- Kart ve yuzeyler ------------------------------------------------------ */
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 18px;
+  border: 1px solid var(--line);
+}
+
+.card--tight {
+  padding: 14px;
+}
+
+.card__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.muted {
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+}
+
+.tiny {
+  font-size: 0.78rem;
+}
+
+.center {
+  text-align: center;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* --- Butonlar -------------------------------------------------------------- */
+
+.btn {
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  font-weight: 800;
+  font-size: 0.98rem;
+  background: var(--bg-2);
+  color: var(--ink);
+  transition: transform 0.15s, filter 0.15s, opacity 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.btn--ghost {
+  background: transparent;
+  border: 1.5px solid var(--line);
+  color: var(--ink-soft);
+}
+
+.btn--danger {
+  background: transparent;
+  border: 1.5px solid color-mix(in srgb, var(--bad) 45%, transparent);
+  color: var(--bad);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--sm {
+  padding: 9px 14px;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-row > * {
+  flex: 1;
+}
+
+/* --- Form ------------------------------------------------------------------ */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field > label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.input {
+  width: 100%;
+  background: var(--bg-2);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 13px 15px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input:focus {
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-1) 22%, transparent);
+}
+
+textarea.input {
+  resize: vertical;
+  min-height: 68px;
+  font-family: inherit;
+}
+
+.input--code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  word-break: break-all;
+}
+
+.pin-input {
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  padding: 16px;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  border-radius: 999px;
+  padding: 9px 15px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  transition: transform 0.15s, border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.chip--on {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+}
+
+.chip:active {
+  transform: scale(0.95);
+}
+
+/* --- Uyelik karti ---------------------------------------------------------- */
+
+.member-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.member-card::after {
+  content: '';
+  position: absolute;
+  inset: -40% -20% auto auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.member-card__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+
+.member-card__name {
+  margin-top: 10px;
+  font-size: 1.45rem;
+  font-weight: 900;
+  position: relative;
+}
+
+.member-card__sub {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  position: relative;
+}
+
+.member-card__barcode {
+  margin-top: 14px;
+  background: #fff;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px 4px;
+  position: relative;
+}
+
+.member-card__barcode svg {
+  display: block;
+  width: 100%;
+  height: 54px;
+}
+
+/* --- Bakiye ve jeton ------------------------------------------------------- */
+
+.balance {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.balance__value {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.balance__label {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.coin {
+  flex: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.16));
+}
+
+@keyframes coin-pop {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  35% {
+    transform: scale(1.22) rotate(-9deg);
+  }
+  65% {
+    transform: scale(0.95) rotate(6deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.coin--pop {
+  animation: coin-pop 0.7s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+@keyframes coin-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.coin--float {
+  animation: coin-float 3.2s ease-in-out infinite;
+}
+
+/* --- Pul karti ------------------------------------------------------------- */
+
+.stampcard {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.stampcard__slot {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px dashed var(--line);
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  color: var(--ink-soft);
+  background: var(--bg-2);
+}
+
+.stampcard__slot--filled {
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+  animation: coin-pop 0.5s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.progress {
+  height: 9px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.progress__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  transition: width 0.6s cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+
+/* --- QR ve kod ------------------------------------------------------------- */
+
+.qr {
+  background: #fff;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.qr img,
+.qr canvas {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.scanner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #14101a;
+  box-shadow: var(--shadow);
+}
+
+.scanner video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scanner__frame {
+  position: absolute;
+  inset: 14%;
+  border-radius: var(--radius-md);
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 100vmax rgba(20, 16, 26, 0.35);
+  pointer-events: none;
+}
+
+/* --- Liste ----------------------------------------------------------------- */
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.list__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.list__item:last-child {
+  border-bottom: 0;
+}
+
+.list__icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  background: var(--bg-2);
+}
+
+.list__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.list__main strong {
+  display: block;
+  font-size: 0.94rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list__amount {
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.list__amount--in {
+  color: var(--good);
+}
+
+.list__amount--out {
+  color: var(--ink-soft);
+}
+
+/* --- Odul karti ------------------------------------------------------------ */
+
+.reward {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--line);
+  background: var(--card);
+}
+
+.reward--locked {
+  opacity: 0.55;
+}
+
+.reward__emoji {
+  font-size: 1.8rem;
+  flex: none;
+  width: 46px;
+  text-align: center;
+}
+
+.reward__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.reward__body strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+/* --- Bildirim / uyari ------------------------------------------------------ */
+
+.note {
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 0.86rem;
+  border: 1.5px solid var(--line);
+  background: var(--bg-2);
+}
+
+.note--bad {
+  border-color: color-mix(in srgb, var(--bad) 40%, transparent);
+  background: color-mix(in srgb, var(--bad) 12%, transparent);
+  color: var(--bad);
+}
+
+.note--good {
+  border-color: color-mix(in srgb, var(--good) 40%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent);
+  color: var(--good);
+}
+
+/* --- Modal ----------------------------------------------------------------- */
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(30, 22, 34, 0.5);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fade-in 0.2s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+.sheet {
+  width: 100%;
+  max-width: 520px;
+  background: var(--bg);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: sheet-up 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* --- Konfeti --------------------------------------------------------------- */
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  overflow: hidden;
+}
+
+.confetti i {
+  position: absolute;
+  top: -14px;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translateY(105vh) rotate(720deg);
+    opacity: 0.15;
+  }
+}
+
+/* --- Rol secimi ------------------------------------------------------------ */
+
+.role-pick {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.role-card {
+  border: 2px solid var(--line);
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.16s, border-color 0.16s, box-shadow 0.16s;
+}
+
+.role-card--on {
+  border-color: var(--accent-1);
+  box-shadow: var(--shadow-sm);
+}
+
+.role-card:active {
+  transform: scale(0.97);
+}
+
+.role-card strong {
+  font-size: 1.05rem;
+}
+
+/* --- Yukleniyor ------------------------------------------------------------ */
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-emoji {
+  font-size: 3.2rem;
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
